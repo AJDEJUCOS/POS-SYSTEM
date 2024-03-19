@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="assets/icon.png" rel="icon">
+    <title>KATE & AJ POS SYSTEM</title>
+    <style>
+        .choices-quantity {
+            display: inline-block;
+            vertical-align: top;
+            margin-right: 20px;
+        }
+        .choices-quantity > * {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<main>
+    <h1>Welcome to the canteen! Here are our street foods menu.</h1>
+    <h2>Prices are shown below. Click finalize order button once you're sure with your orders.</h2>
+    <div class="street-foods">
+        <ul id="street-foods-list">
+            <li>Burgers - 60 pesos</li>
+            <li>Fries - 50 pesos</li>
+            <li>Fishball - 20 pesos</li>
+            <li>Kikiam - 10 pesos</li>
+        </ul>
+        <button type="button" onclick="addNewStreetFood()">Add a food <br>item</button>
+    </div>
+
+    <br>
+
+    <div id="ORDER1-container">
+        <div class="choices-quantity">
+            <form>
+                <label for="street-foods">Choice</label> <br>
+                <select name="street-foods" class="street-foods-select" onchange="showOptions(this)">
+                    <option value="burger">Burger</option>
+                    <option value="fries">Fries</option>
+                    <option value="fishball">Fishball</option>
+                    <option value="kikiam">Kikiam</option>
+                </select>
+            </form>
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" min="1" value="1">
+        </div>
+    </div>
+
+    <div class="pay">
+        <button type="button" onclick="finalizeOrder()">Finalize <br>order</button>
+    </div>
+
+    <br>
+
+    <div class="cashpayment">
+        <label for="money">Cash</label> <br>
+        <input type="number" id="money" min="1">
+        <button id="payButton" onclick="payOrder()" disabled>Pay!</button> <!-- Pay button -->
+    </div>
+
+    <br><br><br><br><br><br><br><br><br><br><br><p><strong>This project is made possible by:</strong><i> Kate D. Calawigan and AJ Dejucos</i></p>
+
+    <script>
+        let extraChoiceCount = 0; // Initialize the counter for extra choices
+        let totalPrice = 0; // Initialize total price
+        
+        function addNewStreetFood() {
+            extraChoiceCount++; // Increment the counter for each new extra choice
+
+            var newChoicesContainer = document.createElement("div");
+            newChoicesContainer.classList.add("choices-quantity");
+            newChoicesContainer.innerHTML = `
+                <form>
+                    <label for="street-foods">Extra Choice ${extraChoiceCount}</label> <br>
+                    <select name="street-foods" class="street-foods-select" onchange="showOptions(this)">
+                        <option value="burger">Burger</option>
+                        <option value="fries">Fries</option>
+                        <option value="fishball">Fishball</option>
+                        <option value="kikiam">Kikiam</option>
+                    </select>
+                </form>
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" min="1" value="1">
+            `;
+            var choicesContainer = document.getElementById("ORDER1-container");
+            choicesContainer.appendChild(newChoicesContainer);
+        }
+
+        function finalizeOrder() {
+            totalPrice = 0; // Reset total price
+            let quantities = document.querySelectorAll('.choices-quantity input[type="number"]');
+            let prices = [60, 50, 20, 10]; // Prices of each item in the same order as the options
+            quantities.forEach((quantity, index) => {
+                let qty = parseInt(quantity.value);
+                let selectedOption = document.querySelector('.choices-quantity:nth-child(' + (index + 1) + ') select').value;
+                let priceIndex = ['burger', 'fries', 'fishball', 'kikiam'].indexOf(selectedOption);
+                totalPrice += qty * prices[priceIndex];
+            });
+
+            alert("Order Finalized!\nTotal Amount: " + totalPrice + " Pesos");
+
+            // Enable the pay button
+            document.getElementById("payButton").disabled = false;
+        }
+
+        function payOrder() {
+            let cashInput = document.getElementById("money").value;
+            if (cashInput < totalPrice) {
+                alert("Cash is insufficient to cover the total price!");
+                return; // Stop execution if cash is insufficient
+            }
+
+            let change = cashInput - totalPrice;
+            alert("Thanks for your order!\n Change: " + change + " Pesos");
+        }
+    </script>
+    
+</main>
+</body>
+</html>
